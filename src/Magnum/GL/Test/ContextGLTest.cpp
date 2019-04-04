@@ -29,6 +29,8 @@
 #include "Magnum/GL/Extensions.h"
 #include "Magnum/GL/OpenGLTester.h"
 
+#include "Magnum/Platform/GLContext.h"
+
 namespace Magnum { namespace GL { namespace Test { namespace {
 
 struct ContextGLTest: OpenGLTester {

@@ -34,6 +34,7 @@ namespace Magnum { namespace GL { namespace Test { namespace {
 struct ContextTest: TestSuite::Tester {
     explicit ContextTest();
 
+    void constructNoCreate();
     void constructCopyMove();
 
     void extensions();
@@ -46,7 +47,8 @@ struct ContextTest: TestSuite::Tester {
 };
 
 ContextTest::ContextTest() {
-    addTests({&ContextTest::constructCopyMove,
+    addTests({&ContextTest::constructNoCreate,
+              &ContextTest::constructCopyMove,
 
               &ContextTest::extensions,
 
@@ -55,6 +57,18 @@ ContextTest::ContextTest() {
 
               &ContextTest::debugDetectedDriver,
               &ContextTest::debugDetectedDrivers});
+}
+
+void ContextTest::constructNoCreate() {
+    {
+        /* Shouldn't crash during construction, shouldn't attempt to access GL,
+           shouldn't crash when destructing */
+        struct MyContext: Context {
+            explicit MyContext(): Context{NoCreate, 0, nullptr, nullptr} {}
+        } context;
+    }
+
+    CORRADE_VERIFY(true);
 }
 
 void ContextTest::constructCopyMove() {
