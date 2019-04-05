@@ -126,56 +126,47 @@ class MagnumConan(ConanFile):
         "corrade/2019.01@magnum/stable"
     )
 
-    def system_package_architecture(self):
-        if tools.os_info.with_apt:
-            if self.settings.arch == "x86":
-                return ':i386'
-            elif self.settings.arch == "x86_64":
-                return ':amd64'
-            elif self.settings.arch == "armv6" or self.settings.arch == "armv7":
-                return ':armel'
-            elif self.settings.arch == "armv7hf":
-                return ':armhf'
-            elif self.settings.arch == "armv8":
-                return ':arm64'
-
-        if tools.os_info.with_yum:
-            if self.settings.arch == "x86":
-                return '.i686'
-            elif self.settings.arch == 'x86_64':
-                return '.x86_64'
-        return ""
-
     def system_requirements(self):
         # Install required OpenGL stuff on linux
+        packages = []
         if tools.os_info.is_linux:
             if tools.os_info.with_apt:
                 installer = tools.SystemPackageTool()
 
-                packages = []
+                if self.settings.arch == "x86":
+                    arch_suffix = ':i386'
+                elif self.settings.arch == "x86_64":
+                    arch_suffix = ':amd64'
+                elif self.settings.arch == "armv6" or self.settings.arch == "armv7":
+                    arch_suffix = ':armel'
+                elif self.settings.arch == "armv7hf":
+                    arch_suffix = ':armhf'
+                elif self.settings.arch == "armv8":
+                    arch_suffix = ':arm64'
+
                 if self.options.target_gl:
                     packages.append("libgl1-mesa-dev")
                 if self.options.target_gles:
                     packages.append("libgles1-mesa-dev")
 
-                arch_suffix = self.system_package_architecture()
-                for package in packages:
-                    installer.install("%s%s" % (package, arch_suffix))
-
             elif tools.os_info.with_yum:
                 installer = tools.SystemPackageTool()
+                if self.settings.arch == "x86":
+                    arch_suffix = '.i686'
+                elif self.settings.arch == 'x86_64':
+                    arch_suffix = '.x86_64'
 
-                arch_suffix = self.system_package_architecture()
                 packages = []
                 if self.options.target_gl:
                     packages.append("mesa-libGL-devel")
                 if self.options.target_gles:
                     packages.append("mesa-libGLES-devel")
 
-                for package in packages:
-                    installer.install("%s%s" % (package, arch_suffix))
             else:
                 self.output.warn("Could not determine package manager, skipping Linux system requirements installation.")
+
+        for package in packages:
+            installer.install("{}{}".format(package, arch_suffix))
 
     def config_options(self):
         if self.settings.os == 'Windows':
