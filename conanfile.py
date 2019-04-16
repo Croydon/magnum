@@ -191,6 +191,8 @@ class MagnumConan(ConanFile):
             self.requires("sdl2/2.0.9@bincrafters/stable")
         if self.options.with_glfwapplication:
             self.requires("glfw/3.2.1.20180327@bincrafters/stable")
+        if self.options.with_audio:
+            self.requires("openal/1.19.0@bincrafters/stable")
 
     def source(self):
         # Wrap the original CMake file to call conan_basic_setup
