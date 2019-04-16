@@ -46,6 +46,7 @@ class MagnumConan(ConanFile):
         "build_plugins_static": [True, False],
         "target_gl": [True, False],
         "target_gles": [True, False],
+        "target_vk": [True, False],
         "with_anyaudioimporter": [True, False],
         "with_anyimageconverter": [True, False],
         "with_anyimageimporter": [True, False],
@@ -86,6 +87,7 @@ class MagnumConan(ConanFile):
         "build_plugins_static": False,
         "target_gl": True,
         "target_gles": False,
+        "target_vk": False,
         "with_anyaudioimporter": False,
         "with_anyimageconverter": False,
         "with_anyimageimporter": False,
@@ -148,6 +150,8 @@ class MagnumConan(ConanFile):
                     packages.append("libgl1-mesa-dev")
                 if self.options.target_gles:
                     packages.append("libgles1-mesa-dev")
+                if self.options.target_vk:
+                    packages.append("libvulkan-dev")
 
             elif tools.os_info.with_yum:
                 installer = tools.SystemPackageTool()
@@ -161,6 +165,8 @@ class MagnumConan(ConanFile):
                     packages.append("mesa-libGL-devel")
                 if self.options.target_gles:
                     packages.append("mesa-libGLES-devel")
+                if self.options.target_vk:
+                    packages.append("vulkan-devel")
 
             else:
                 self.output.warn("Could not determine package manager, skipping Linux system requirements installation.")
